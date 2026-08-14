@@ -21,18 +21,21 @@ ARM and ARM64 MSI installers will be available in the future.
 
 ## Installation
 
-The MSI can be installed with `msiexec`:
+The MSI is intended for mass deployment and can be installed silently with `msiexec`:
 
 ```cmd
-msiexec /i Everything.msi
+msiexec /i Everything.msi /qn
 ```
 
-The installer properties can be used to customize the installation. All properties default to `1` (enabled).
+Installer properties can be used to customize the installation.
 
-For example, to install Everything without the desktop shortcut:
+For example, to silently install Everything without starting on system startup or installing a desktop shortcut:
 
 ```cmd
-msiexec /i Everything.msi DESKTOP_SHORTCUT=0
+msiexec /i Everything.msi /qn START_ON_STARTUP=0 DESKTOP_SHORTCUT=0
+```
+
+See [Installer Properties](#installer-properties) for a list of available properties.
 ```
 
 
