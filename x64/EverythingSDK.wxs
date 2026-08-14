@@ -1,0 +1,7 @@
+<?xml version='1.0'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+   <Fragment>
+      <CustomAction Id="EverythingSDKMSIExitAndStopService" BinaryKey="EverythingSDK" DllEntry="Everything_MSIExitAndStopService" Execute="immediate" Return="ignore"/>
+      <Binary Id='EverythingSDK' SourceFile='..\Everything64.dll'/>
+   </Fragment>
+</Wix>
