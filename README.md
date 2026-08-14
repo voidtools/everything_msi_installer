@@ -8,7 +8,7 @@ The MSI installer is intended for **mass deployment of Everything** in managed W
 
 ## Download
 
-The latest Everything MSI installers are available from:
+The latest Everything MSI installers are available from:<br/>
 https://www.voidtools.com/downloads/#all15
 
 MSI installers are currently available for:
