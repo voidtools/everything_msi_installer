@@ -36,7 +36,6 @@ msiexec /i Everything.msi /qn START_ON_STARTUP=0 DESKTOP_SHORTCUT=0
 ```
 
 See [Installer Properties](#installer-properties) for a list of available properties.
-```
 
 
 
