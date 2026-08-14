@@ -8,7 +8,14 @@ The MSI installer is intended for **mass deployment of Everything** in managed W
 
 ## Download
 
+The latest Everything MSI installers are available from:
 https://www.voidtools.com/downloads/#all15
+
+MSI installers are currently available for:
+- x86
+- x64
+
+ARM and ARM64 MSI installers will be available in the future.
 
 
 
@@ -158,6 +165,14 @@ To install an older version, uninstall the newer version first:
 msiexec /x Everything.msi /qn
 msiexec /i Everything-older-version.msi /qn
 ```
+
+
+
+## Group Policy
+
+Everything 1.5 supports Group Policy for managing and locking Everything settings.
+
+Download the ADM/ADMX administrative templates and see the available policies in the [Everything Group Policy](https://www.voidtools.com/forum/viewtopic.php?f=12&t=11948) forum topic.
 
 
 
