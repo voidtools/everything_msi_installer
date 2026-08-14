@@ -1,1 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+	
+	<?include Everything.wxi ?>
 
+    <Product Id="*" UpgradeCode="$(var.UpgradeCode)" Version="$(var.MajorVersion).$(var.MinorVersion).$(var.RevisionVersion).$(var.BuildVersion)" Language="1033" Name="$(var.ProgramName)" Manufacturer="voidtools">
+
+        <Package InstallerVersion="300" Compressed="yes"  Platform="$(var.Platform)" InstallScope="perMachine" Description="$(var.ProgramName) $(var.MajorVersion).$(var.MinorVersion).$(var.RevisionVersion).$(var.BuildVersion) $(var.Platform) Setup"/>
+		
+		<Upgrade Id="$(var.UpgradeCode)">
+			<UpgradeVersion Minimum="1.0.0.0" IncludeMinimum="yes" OnlyDetect="no" Maximum="99.0.0.0" IncludeMaximum="no" Property="OLDPRODUCTS" />
+		</Upgrade>
+		
+        <Media Id="1" Cabinet="Everything.cab" EmbedCab="yes" />
+		<Property Id="DISABLEADVTSHORTCUTS" Value="1" />
+		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+		<Property Id="ARPPRODUCTICON" Value="AppIcon.exe" />
+		<Property Id="LicenseAccepted" Value="1"/>
+
+		<!--
+			=====================================================================
+			DEPLOYMENT PROPERTIES - no UI, command-line / transform only.
+			e.g. msiexec /i Everything.msi EVERYTHING_SERVICE=0 DESKTOP_SHORTCUT=1 /qn
+			=====================================================================
+			These are all machine-wide (HKLM). See the note at the bottom of
+			this file re: why there's no per-user variant for a deployment MSI.
+			Accepted values are literally "1" / "0" (matching what Orca/the
+			Property table will show) - document that explicitly, since some
+			admins will reasonably assume TRUE/FALSE from other vendors'
+			installers (Firefox's MSI accepts true/false; ours doesn't).
+		-->
+		
+		<Property Id="EVERYTHING_SERVICE" Value="1" Secure="yes" />
+		<Property Id="START_ON_STARTUP" Value="1" Secure="yes" />
+		<Property Id="START_MENU_SHORTCUT" Value="1" Secure="yes" />
+		<Property Id="DESKTOP_SHORTCUT" Value="1" Secure="yes" />
+		<Property Id="EFU_ASSOCIATION" Value="1" Secure="yes" />
+		<Property Id="LANGUAGE_PACK" Value="1" Secure="yes" />
+		<Property Id="APPDATA_EVERYTHING" Value="1" Secure="yes" />
+
+
+        <!-- Step 1: Define the directory structure -->
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="$(var.PlatformProgramFilesFolder)">
+                <Directory Id="INSTALLDIR" Name="Everything"/>
+            </Directory>
+			<Directory Id="DesktopFolder" Name="Desktop" />
+			<Directory Id="ProgramMenuFolder" Name="Programs" />
+        </Directory>
+		
+		<Icon Id="AppIcon.exe" SourceFile="C:\dev\everything\res\everything.ico"/>
+		<UI>
+			<UIRef Id="WixUI_InstallDir" />
+		</UI>
+	
+		<!-- Step 2: Add files to your installer package -->
+        <DirectoryRef Id="INSTALLDIR">
+
+			<!--
+				=====================================================================
+				Everything.exe - split into two mutually-exclusive components so the
+				service is either registered from the start or never touched at all
+				(no register-then-sc-delete). Both put the exe at the same target
+				path, which is expected here - light.exe will raise ICE18
+				("2 components install to the same file") since it can't itself
+				prove the Conditions are mutually exclusive; suppress it
+				(light.exe -sice:ICE18, or <SuppressIce>ICE18</SuppressIce> if
+				you're building via the WiX MSBuild targets / .wixproj).
+			-->
+			<Component Id="EverythingExeWithService" Guid="31409EF0-DA2B-4cd5-996B-7476582F5B79" Win64="$(var.Win64)">
+				<Condition>EVERYTHING_SERVICE = "1" OR EVERYTHING_SERVICE ~= "true"</Condition>
+				<File Id="EverythingExeSvc" Name="Everything.exe" Source="$(var.EverythingExeSource)" KeyPath="yes" Checksum="yes"/>
+				<ServiceInstall Id="EverythingService" Type="ownProcess" Name="Everything" DisplayName="Everything" Description="Provides NTFS indexing, ReFS indexing and USN Journal services to the Everything search client." Start="auto" ErrorControl="ignore" Arguments="-svc"/>
+				<ServiceControl Id="EverythingServiceControl" Name="Everything" Start="install" Stop="both" Remove="uninstall" Wait="yes" />
+			</Component>
+
+			<Component Id="EverythingExeNoService" Guid="44EA54B9-067D-4b8b-9990-93E33C229C16" Win64="$(var.Win64)">
+				<Condition>NOT (EVERYTHING_SERVICE = "1" OR EVERYTHING_SERVICE ~= "true")</Condition>
+				<File Id="EverythingExeNoSvc" Name="Everything.exe" Source="$(var.EverythingExeSource)" KeyPath="yes" Checksum="yes"/>
+			</Component>
+
+            <Component Id="Everything.lng" Guid="56243B62-953F-4fa7-8A60-CE754637748D" Win64="$(var.Win64)">
+				<Condition>LANGUAGE_PACK = "1" OR LANGUAGE_PACK ~= "true"</Condition>
+                <File Id="Everything.lng" Source="C:\dev\everything\localization\Everything.lng" KeyPath="yes" Checksum="yes"/>
+            </Component>
+            <Component Id="Everything.ini" Guid="83D084C1-0CE5-47cc-9A3F-6279B4832EC6" Win64="$(var.Win64)">
+				<Condition>APPDATA_EVERYTHING = "1" OR APPDATA_EVERYTHING ~= "true"</Condition>
+                <File Id="Everything.ini" Source="C:\dev\everything\msi\ini\Everything.ini" KeyPath="yes" Checksum="yes"/>
+            </Component>
+
+			<!-- All-users startup-->
+			<Component Id="StartOnStartup" Guid="5534AED7-A6F6-4bee-AF07-E497D57B8371" Win64="$(var.Win64)">
+				<Condition>START_ON_STARTUP = "1" OR START_ON_STARTUP ~= "true"</Condition>
+				<RegistryValue Root="HKLM" Key="Software\Microsoft\Windows\CurrentVersion\Run" Type="string" Name="Everything" Value="&quot;[INSTALLDIR]Everything.exe&quot; -startup" Action="write" KeyPath="yes"/>
+			</Component>
+
+			<!-- All-users EFU association -->
+			<Component Id="EFUAssociation" Guid="FB7A2FBE-8F79-4f26-96DB-407F3A6C5AC8" Win64="$(var.Win64)">
+				<Condition>EFU_ASSOCIATION = "1" OR EFU_ASSOCIATION ~= "true"</Condition>
+				<RegistryValue Root="HKCR" Key=".efu" Type="string" Value="Everything.FileList" KeyPath="yes"/>
+				<RegistryValue Root="HKCR" Key=".efu" Type="string" Name="Content Type" Value="text/plain"/>
+				<RegistryValue Root="HKCR" Key=".efu" Type="string" Name="PerceivedType" Value="text"/>
+				<RegistryValue Root="HKCR" Key="Everything.FileList" Type="string" Value="Everything File List"/>
+				<RegistryValue Root="HKCR" Key="Everything.FileList\DefaultIcon" Type="string" Value="[INSTALLDIR]Everything.exe, 1"/>
+				<RegistryValue Root="HKCR" Key="Everything.FileList\shell\edit\command" Type="string" Value="&quot;[INSTALLDIR]Everything.exe&quot; -edit &quot;%1&quot;"/>
+				<RegistryValue Root="HKCR" Key="Everything.FileList\shell\open\command" Type="string" Value="&quot;[INSTALLDIR]Everything.exe&quot; -filelist &quot;%1&quot;"/>
+			</Component>
+
+			<!-- All-users Start Menu shortcut.-->
+			<Component Id="StartMenuShortcut" Guid="52832857-026F-4b4b-B47F-89AF9BED6624" Win64="$(var.Win64)">
+				<Condition>START_MENU_SHORTCUT = "1" OR START_MENU_SHORTCUT ~= "true"</Condition>
+				<Shortcut Id="StartMenuShortcutLnk" Directory="ProgramMenuFolder" Name="Everything" WorkingDirectory="INSTALLDIR" Target="[INSTALLDIR]Everything.exe" Advertise="no"/>
+				<RegistryValue Root="HKLM" Key="Software\voidtools\Everything" Name="MSIStartMenuShortcut" Type="integer" Value="1" KeyPath="yes"/>
+			</Component>
+
+			<!-- All-users Desktop shortcut.-->
+			<Component Id="DesktopShortcut" Guid="7699CA4A-EE25-4e18-AE08-C7F995E4A0ED" Win64="$(var.Win64)">
+				<Condition>DESKTOP_SHORTCUT = "1" OR DESKTOP_SHORTCUT ~= "true"</Condition>
+				<Shortcut Id="DesktopShortcutLnk" Directory="DesktopFolder" Name="Everything" Description="Search Everything" WorkingDirectory="INSTALLDIR" Target="[INSTALLDIR]Everything.exe" Advertise="no"/>
+				<RegistryValue Root="HKLM" Key="Software\voidtools\Everything" Name="MSIDesktopShortcut" Type="integer" Value="1" KeyPath="yes"/>
+			</Component>
+
+        </DirectoryRef>
+
+        <!-- Step 3: Tell WiX to install the files -->
+        <Feature Id="MainApplication" Title="Install Everything" Level="1">
+            <ComponentRef Id="EverythingExeWithService" />
+            <ComponentRef Id="EverythingExeNoService" />
+            <ComponentRef Id="Everything.lng" />
+            <ComponentRef Id="Everything.ini" />
+            <ComponentRef Id="StartOnStartup" />
+            <ComponentRef Id="EFUAssociation" />
+            <ComponentRef Id="StartMenuShortcut" />
+            <ComponentRef Id="DesktopShortcut" />
+        </Feature>
+		
+		<InstallExecuteSequence>
+			<RemoveExistingProducts After="InstallInitialize"/>
+			<Custom Action='EverythingSDKMSIExitAndStopService' Before='InstallValidate'>1</Custom>
+		</InstallExecuteSequence>
+
+    </Product>
+</Wix>
