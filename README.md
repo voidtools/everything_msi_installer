@@ -21,18 +21,26 @@ ARM and ARM64 MSI installers will be available in the future.
 
 ## Installation
 
-The MSI is intended for mass deployment and can be installed silently with `msiexec`:
+The MSI can be installed with `msiexec`:
+
+```cmd
+msiexec /i Everything.msi
+```
+
+### Silent Installation
+
+For mass deployment, use `/qn` to install Everything silently without displaying the MSI user interface:
 
 ```cmd
 msiexec /i Everything.msi /qn
 ```
 
-Installer properties can be used to customize the installation.
+Installer properties can be combined with `/qn` to customize a silent installation.
 
-For example, to silently install Everything without starting on system startup or installing a desktop shortcut:
+For example:
 
 ```cmd
-msiexec /i Everything.msi /qn START_ON_STARTUP=0 DESKTOP_SHORTCUT=0
+msiexec /i Everything.msi /qn EVERYTHING_SERVICE=1 START_ON_STARTUP=0 DESKTOP_SHORTCUT=0
 ```
 
 See [Installer Properties](#installer-properties) for a list of available properties.
@@ -125,21 +133,7 @@ To disable `%APPDATA%\Everything`:
 msiexec /i Everything.msi APPDATA_EVERYTHING=0
 ```
 
-## Silent Installation
 
-Use `/qn` to install Everything silently without displaying the MSI user interface:
-
-```cmd
-msiexec /i Everything.msi /qn
-```
-
-Installer properties can be combined with `/qn` to customize a silent installation.
-
-For example, to silently install Everything with the Everything Service, Start Menu shortcut, and EFU association, but without startup, desktop shortcut, language pack, or `%APPDATA%\Everything`:
-
-```cmd
-msiexec /i Everything.msi /qn START_ON_STARTUP=0 DESKTOP_SHORTCUT=0 LANGUAGE_PACK=0 APPDATA_EVERYTHING=0
-```
 
 ## Uninstallation
 
