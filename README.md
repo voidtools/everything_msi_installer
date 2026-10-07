@@ -4,20 +4,19 @@ WiX source for the Everything MSI installer.
 
 The MSI installer is intended for **mass deployment of Everything** in managed Windows environments.
 
-
-
 ## Download
 
-The latest Everything MSI installers are available from:<br/>
-https://www.voidtools.com/downloads/#all15
+The latest Everything MSI installers are available from:
+<br/>
+
+<https://www.voidtools.com/downloads/#all15>
 
 MSI installers are currently available for:
+
 - x86
 - x64
 
 ARM and ARM64 MSI installers will be available in the future.
-
-
 
 ## Installation
 
@@ -44,8 +43,6 @@ msiexec /i Everything.msi /qn EVERYTHING_SERVICE=1 START_ON_STARTUP=0 DESKTOP_SH
 ```
 
 See [Installer Properties](#installer-properties) for a list of available properties.
-
-
 
 ## Installer Properties
 
@@ -133,8 +130,6 @@ To disable `%APPDATA%\Everything`:
 msiexec /i Everything.msi APPDATA_EVERYTHING=0
 ```
 
-
-
 ## Uninstallation
 
 To silently uninstall Everything:
@@ -149,8 +144,6 @@ Alternatively, use the product code:
 msiexec /x {PRODUCT-CODE} /qn
 ```
 
-
-
 ## Downgrade
 
 The MSI installer does not support downgrading to an older version.
@@ -162,15 +155,11 @@ msiexec /x Everything.msi /qn
 msiexec /i Everything-older-version.msi /qn
 ```
 
-
-
 ## Group Policy
 
 Everything 1.5 supports Group Policy for managing and locking Everything settings.
 
 Download the ADM/ADMX administrative templates and see the available policies in the [Everything Group Policy](https://www.voidtools.com/forum/viewtopic.php?f=12&t=11948) forum topic.
-
-
 
 ## License
 
