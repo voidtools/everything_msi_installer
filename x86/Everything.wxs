@@ -56,7 +56,9 @@
 
 			<!--
 				=====================================================================
-				Everything.exe - split into two mutually-exclusive components so the
+				Everything.exe -
+				The application has been split into two mutually-exclusive components
+				(EverythingExeWithService & EverythingExeNoService) so the
 				service is either registered from the start or never touched at all
 				(no register-then-sc-delete). Both put the exe at the same target
 				path, which is expected here - light.exe will raise ICE18
@@ -65,6 +67,8 @@
 				(light.exe -sice:ICE18, or <SuppressIce>ICE18</SuppressIce> if
 				you're building via the WiX MSBuild targets / .wixproj).
 			-->
+
+			<!-- Install EverythingExeWithService variant in INSTALLDIR & create System Services-->
 			<Component Id="EverythingExeWithService" Guid="31409EF0-DA2B-4cd5-996B-7476582F5B79" Win64="$(var.Win64)">
 				<Condition>EVERYTHING_SERVICE = "1" OR EVERYTHING_SERVICE ~= "true"</Condition>
 				<File Id="EverythingExeSvc" Name="Everything.exe" Source="$(var.EverythingExeSource)" KeyPath="yes" Checksum="yes"/>
@@ -72,21 +76,25 @@
 				<ServiceControl Id="EverythingServiceControl" Name="Everything" Start="install" Stop="both" Remove="uninstall" Wait="yes" />
 			</Component>
 
+			<!-- Install EverythingExeNoService variant in INSTALLDIR-->
 			<Component Id="EverythingExeNoService" Guid="44EA54B9-067D-4b8b-9990-93E33C229C16" Win64="$(var.Win64)">
 				<Condition>NOT (EVERYTHING_SERVICE = "1" OR EVERYTHING_SERVICE ~= "true")</Condition>
 				<File Id="EverythingExeNoSvc" Name="Everything.exe" Source="$(var.EverythingExeSource)" KeyPath="yes" Checksum="yes"/>
 			</Component>
 
+			<!-- Install Everything.lng language pack in INSTALLDIR-->
             <Component Id="Everything.lng" Guid="56243B62-953F-4fa7-8A60-CE754637748D" Win64="$(var.Win64)">
 				<Condition>LANGUAGE_PACK = "1" OR LANGUAGE_PACK ~= "true"</Condition>
                 <File Id="Everything.lng" Source="C:\dev\everything\localization\Everything.lng" KeyPath="yes" Checksum="yes"/>
             </Component>
+
+			<!-- Everything.ini in AppData-->
             <Component Id="Everything.ini" Guid="83D084C1-0CE5-47cc-9A3F-6279B4832EC6" Win64="$(var.Win64)">
 				<Condition>APPDATA_EVERYTHING = "1" OR APPDATA_EVERYTHING ~= "true"</Condition>
                 <File Id="Everything.ini" Source="C:\dev\everything\msi\ini\Everything.ini" KeyPath="yes" Checksum="yes"/>
             </Component>
 
-			<!-- All-users startup-->
+			<!-- Create all-users startup-->
 			<Component Id="StartOnStartup" Guid="5534AED7-A6F6-4bee-AF07-E497D57B8371" Win64="$(var.Win64)">
 				<Condition>START_ON_STARTUP = "1" OR START_ON_STARTUP ~= "true"</Condition>
 				<RegistryValue Root="HKLM" Key="Software\Microsoft\Windows\CurrentVersion\Run" Type="string" Name="Everything" Value="&quot;[INSTALLDIR]Everything.exe&quot; -startup" Action="write" KeyPath="yes"/>
