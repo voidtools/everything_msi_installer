@@ -4,20 +4,19 @@ WiX source for the Everything MSI installer.
 
 The MSI installer is intended for **mass deployment of Everything** in managed Windows environments.
 
-
-
 ## Download
 
-The latest Everything MSI installers are available from:<br/>
-https://www.voidtools.com/downloads/#all15
+The latest Everything MSI installers are available from:
+<br/>
+
+<https://www.voidtools.com/downloads/#all15>
 
 MSI installers are currently available for:
+
 - x86
 - x64
 
 ARM and ARM64 MSI installers will be available in the future.
-
-
 
 ## Installation
 
@@ -45,15 +44,17 @@ msiexec /i Everything.msi /qn EVERYTHING_SERVICE=1 START_ON_STARTUP=0 DESKTOP_SH
 
 See [Installer Properties](#installer-properties) for a list of available properties.
 
-
-
 ## Installer Properties
+
+While string boolean properties are currently *technically* supported, it is recommended to use integer values wherever possible to ensure future compatibility.
 
 ### EVERYTHING_SERVICE
 
 Installs and starts the Everything Service.
 
 The default value is `1`.
+
+Use `1` | `true` to enable. Values are case-insensitive; use `0` to disable.
 
 To disable the Everything Service:
 
@@ -67,6 +68,8 @@ Runs Everything on system startup for all users.
 
 The default value is `1`.
 
+Use `1` | `true` to enable. Values are case-insensitive; use `0` to disable it.
+
 To disable starting Everything on system startup:
 
 ```cmd
@@ -78,6 +81,8 @@ msiexec /i Everything.msi START_ON_STARTUP=0
 Installs an Everything Start Menu shortcut for all users.
 
 The default value is `1`.
+
+Use `1` | `true` to enable. Values are case-insensitive; use `0` to disable.
 
 To disable the Start Menu shortcut:
 
@@ -91,6 +96,8 @@ Installs an Everything desktop shortcut for all users.
 
 The default value is `1`.
 
+Use `1` | `true` to enable. Values are case-insensitive; use `0` to disable.
+
 To disable the desktop shortcut:
 
 ```cmd
@@ -102,6 +109,8 @@ msiexec /i Everything.msi DESKTOP_SHORTCUT=0
 Registers `.efu` files with Everything for all users.
 
 The default value is `1`.
+
+Use `1` | `true` to enable. Values are case-insensitive; use `0` to disable.
 
 To disable the EFU file association:
 
@@ -115,6 +124,8 @@ Copies `Everything.lng` to the Everything installation folder.
 
 The default value is `1`.
 
+Use `1` | `true` to enable. Values are case-insensitive; use `0` to disable adding the language pack to the system.
+
 To disable the language pack:
 
 ```cmd
@@ -127,13 +138,13 @@ Stores Everything settings and data in `%APPDATA%\Everything`.
 
 The default value is `1`.
 
+Use `1` | `true` to enable. Values are case-insensitive; use `0` to disable to store everything settings & database to installation directory.
+
 To disable `%APPDATA%\Everything`:
 
 ```cmd
 msiexec /i Everything.msi APPDATA_EVERYTHING=0
 ```
-
-
 
 ## Uninstallation
 
@@ -149,8 +160,6 @@ Alternatively, use the product code:
 msiexec /x {PRODUCT-CODE} /qn
 ```
 
-
-
 ## Downgrade
 
 The MSI installer does not support downgrading to an older version.
@@ -162,15 +171,11 @@ msiexec /x Everything.msi /qn
 msiexec /i Everything-older-version.msi /qn
 ```
 
-
-
 ## Group Policy
 
 Everything 1.5 supports Group Policy for managing and locking Everything settings.
 
 Download the ADM/ADMX administrative templates and see the available policies in the [Everything Group Policy](https://www.voidtools.com/forum/viewtopic.php?f=12&t=11948) forum topic.
-
-
 
 ## License
 
