@@ -46,11 +46,15 @@ See [Installer Properties](#installer-properties) for a list of available proper
 
 ## Installer Properties
 
+While string boolean properties are currently *technically* supported, it is recommended to use integer values wherever possible to ensure future compatibility.
+
 ### EVERYTHING_SERVICE
 
 Installs and starts the Everything Service.
 
 The default value is `1`.
+
+Use `1` | `true` to enable. Values are case-insensitive; use `0` to disable.
 
 To disable the Everything Service:
 
@@ -64,6 +68,8 @@ Runs Everything on system startup for all users.
 
 The default value is `1`.
 
+Use `1` | `true` to enable. Values are case-insensitive; use `0` to disable it.
+
 To disable starting Everything on system startup:
 
 ```cmd
@@ -75,6 +81,8 @@ msiexec /i Everything.msi START_ON_STARTUP=0
 Installs an Everything Start Menu shortcut for all users.
 
 The default value is `1`.
+
+Use `1` | `true` to enable. Values are case-insensitive; use `0` to disable.
 
 To disable the Start Menu shortcut:
 
@@ -88,6 +96,8 @@ Installs an Everything desktop shortcut for all users.
 
 The default value is `1`.
 
+Use `1` | `true` to enable. Values are case-insensitive; use `0` to disable.
+
 To disable the desktop shortcut:
 
 ```cmd
@@ -99,6 +109,8 @@ msiexec /i Everything.msi DESKTOP_SHORTCUT=0
 Registers `.efu` files with Everything for all users.
 
 The default value is `1`.
+
+Use `1` | `true` to enable. Values are case-insensitive; use `0` to disable.
 
 To disable the EFU file association:
 
@@ -112,6 +124,8 @@ Copies `Everything.lng` to the Everything installation folder.
 
 The default value is `1`.
 
+Use `1` | `true` to enable. Values are case-insensitive; use `0` to disable adding the language pack to the system.
+
 To disable the language pack:
 
 ```cmd
@@ -123,6 +137,8 @@ msiexec /i Everything.msi LANGUAGE_PACK=0
 Stores Everything settings and data in `%APPDATA%\Everything`.
 
 The default value is `1`.
+
+Use `1` | `true` to enable. Values are case-insensitive; use `0` to disable to store everything settings & database to installation directory.
 
 To disable `%APPDATA%\Everything`:
 

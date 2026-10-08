@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
-	
+
 	<?include Everything.wxi ?>
 
     <Product Id="*" UpgradeCode="$(var.UpgradeCode)" Version="$(var.MajorVersion).$(var.MinorVersion).$(var.RevisionVersion).$(var.BuildVersion)" Language="1033" Name="$(var.ProgramName)" Manufacturer="voidtools">
 
         <Package InstallerVersion="300" Compressed="yes"  Platform="$(var.Platform)" InstallScope="perMachine" Description="$(var.ProgramName) $(var.MajorVersion).$(var.MinorVersion).$(var.RevisionVersion).$(var.BuildVersion) $(var.Platform) Setup"/>
-		
+
 		<Upgrade Id="$(var.UpgradeCode)">
 			<UpgradeVersion Minimum="1.0.0.0" IncludeMinimum="yes" OnlyDetect="no" Maximum="99.0.0.0" IncludeMaximum="no" Property="OLDPRODUCTS" />
 		</Upgrade>
-		
+
         <Media Id="1" Cabinet="Everything.cab" EmbedCab="yes" />
 		<Property Id="DISABLEADVTSHORTCUTS" Value="1" />
 		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
@@ -24,12 +24,10 @@
 			=====================================================================
 			These are all machine-wide (HKLM). See the note at the bottom of
 			this file re: why there's no per-user variant for a deployment MSI.
-			Accepted values are literally "1" / "0" (matching what Orca/the
-			Property table will show) - document that explicitly, since some
-			admins will reasonably assume TRUE/FALSE from other vendors'
-			installers (Firefox's MSI accepts true/false; ours doesn't).
+			Accepted values are "1" / "0" or "true" / "false" (case-insensitive).
+			However, the Property table in Orca will show the numeric defaults.
 		-->
-		
+
 		<Property Id="EVERYTHING_SERVICE" Value="1" Secure="yes" />
 		<Property Id="START_ON_STARTUP" Value="1" Secure="yes" />
 		<Property Id="START_MENU_SHORTCUT" Value="1" Secure="yes" />
@@ -47,12 +45,12 @@
 			<Directory Id="DesktopFolder" Name="Desktop" />
 			<Directory Id="ProgramMenuFolder" Name="Programs" />
         </Directory>
-		
+
 		<Icon Id="AppIcon.exe" SourceFile="C:\dev\everything\res\everything.ico"/>
 		<UI>
 			<UIRef Id="WixUI_InstallDir" />
 		</UI>
-	
+
 		<!-- Step 2: Add files to your installer package -->
         <DirectoryRef Id="INSTALLDIR">
 
@@ -133,7 +131,7 @@
             <ComponentRef Id="StartMenuShortcut" />
             <ComponentRef Id="DesktopShortcut" />
         </Feature>
-		
+
 		<InstallExecuteSequence>
 			<RemoveExistingProducts After="InstallInitialize"/>
 			<Custom Action='EverythingSDKMSIExitAndStopService' Before='InstallValidate'>1</Custom>
